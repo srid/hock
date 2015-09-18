@@ -1,6 +1,7 @@
 package main
 
 import (
+	log "github.com/Sirupsen/logrus"
 	"sync"
 )
 
@@ -26,6 +27,9 @@ func getOrCreateDrainSafe(key string) *Drain {
 		drn := NewDrain(key)
 		drains[key] = drn
 		go drn.Run()
+		log.WithFields(log.Fields{
+			"count#hock.drains": len(drains),
+		}).Info("Created new drain '%s'", key)
 		return drn
 	}
 }
