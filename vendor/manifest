@@ -62,6 +62,12 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/pborman/uuid",
+			"repository": "https://github.com/pborman/uuid",
+			"revision": "cccd189d45f7ac3368a0d127efb7f4d08ae0b655",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/tobi/airbrake-go",
 			"repository": "https://github.com/tobi/airbrake-go",
 			"revision": "5b5e269e1bc398d43f67e43dafff3414a59cd5a2",

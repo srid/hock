@@ -6,18 +6,20 @@ import (
 )
 
 type Drain struct {
-	name string
+	name        string
+	broadcaster *Broadcaster
 	*drain.Drain
 }
 
 func NewDrain(name string) *Drain {
 	return &Drain{
 		name,
+		NewBroadcaster(1500),
 		drain.NewDrain()}
 }
 
 func (d *Drain) Process() {
 	for line := range d.Logs() {
-		fmt.Println(line)
+		d.broadcaster.Broadcast(fmt.Sprintf("%+v", line))
 	}
 }
