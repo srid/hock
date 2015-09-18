@@ -25,7 +25,7 @@ func getOrCreateDrainSafe(key string) *Drain {
 	} else {
 		drn := NewDrain(key)
 		drains[key] = drn
-		go drn.Process()
+		go drn.Run()
 		return drn
 	}
 }

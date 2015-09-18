@@ -24,6 +24,19 @@ func drainGateway(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 	drn.LogsHandler(w, r)
 }
 
+func tailGateway(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	name := ps.ByName("name")
+	if name == "" {
+		oops(fmt.Errorf("no name"))
+	}
+	drn := getOrCreateDrain(name)
+	sub := drn.broadcaster.Subscribe()
+	defer drn.broadcaster.Unsubscribe(sub)
+	for log := range sub.Logs() {
+		fmt.Fprintf(w, "%s\n", log)
+	}
+}
+
 func main() {
 	port, err := strconv.Atoi(os.Getenv("PORT"))
 	if err != nil {
@@ -32,7 +45,8 @@ func main() {
 	addr := fmt.Sprintf("0.0.0.0:%d", port)
 
 	router := httprouter.New()
-	router.POST("/logs/:name", drainGateway)
+	router.POST("/input/:name", drainGateway)
+	router.POST("/output/:name", tailGateway)
 
 	err = http.ListenAndServe(addr, router)
 	oops(err)

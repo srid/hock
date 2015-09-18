@@ -18,7 +18,8 @@ func NewDrain(name string) *Drain {
 		drain.NewDrain()}
 }
 
-func (d *Drain) Process() {
+func (d *Drain) Run() {
+	go d.broadcaster.Run()
 	for line := range d.Logs() {
 		d.broadcaster.Broadcast(fmt.Sprintf("%+v", line))
 	}

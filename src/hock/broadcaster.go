@@ -23,8 +23,8 @@ func (b *Broadcaster) Subscribe() *Subscriber {
 	return sub
 }
 
-func (b *Broadcaster) Unsubscribe(id string) {
-	b.unsubscribeRequests <- id
+func (b *Broadcaster) Unsubscribe(sub *Subscriber) {
+	b.unsubscribeRequests <- sub.GetID()
 }
 
 func (b *Broadcaster) Broadcast(log string) {

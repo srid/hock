@@ -39,3 +39,7 @@ func (s *Subscriber) Close() {
 func (s *Subscriber) GetID() string {
 	return s.id
 }
+
+func (s *Subscriber) Logs() chan string {
+	return s.ch
+}
