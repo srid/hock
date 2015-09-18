@@ -4,6 +4,8 @@ import (
 	"github.com/pborman/uuid"
 )
 
+const SUBSCRIBER_BUFFER_SIZE = 100
+
 type Subscriber struct {
 	id    string
 	ch    chan string
@@ -13,7 +15,7 @@ type Subscriber struct {
 func NewSubscriber() *Subscriber {
 	return &Subscriber{
 		uuid.New(),
-		make(chan string),
+		make(chan string, SUBSCRIBER_BUFFER_SIZE),
 		0}
 }
 

@@ -40,13 +40,13 @@ func (b *Broadcaster) Run() {
 			b.subscribers[sub.GetID()] = sub
 			log.WithFields(log.Fields{
 				"count#hock.subscribers": len(b.subscribers),
-			}).Info("Created new subscriber '%s'", sub.GetID())
+			}).Infof("Created new subscriber '%s'", sub.GetID())
 		case id := <-b.unsubscribeRequests:
 			b.subscribers[id].Close()
 			delete(b.subscribers, id)
 			log.WithFields(log.Fields{
 				"count#hock.subscribers": len(b.subscribers),
-			}).Info("Deleted subscriber '%s'", id)
+			}).Infof("Deleted subscriber '%s'", id)
 		case log := <-b.ch:
 			for _, sub := range b.subscribers {
 				sub.send(log)

@@ -29,7 +29,7 @@ func getOrCreateDrainSafe(key string) *Drain {
 		go drn.Run()
 		log.WithFields(log.Fields{
 			"count#hock.drains": len(drains),
-		}).Info("Created new drain '%s'", key)
+		}).Infof("Created new drain '%s'", key)
 		return drn
 	}
 }
