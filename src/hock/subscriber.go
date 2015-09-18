@@ -1,12 +1,18 @@
 package main
 
+import (
+	"github.com/pborman/uuid"
+)
+
 type Subscriber struct {
+	id    string
 	ch    chan string
 	drops int
 }
 
 func NewSubscriber() *Subscriber {
 	return &Subscriber{
+		uuid.New(),
 		make(chan string),
 		0}
 }
@@ -28,4 +34,8 @@ func (s *Subscriber) send(log string) {
 
 func (s *Subscriber) Close() {
 	close(s.ch)
+}
+
+func (s *Subscriber) GetID() string {
+	return s.id
 }

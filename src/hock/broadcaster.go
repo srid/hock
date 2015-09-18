@@ -1,15 +1,12 @@
 package main
 
-import (
-	"github.com/pborman/uuid"
-)
+import ()
 
 type Broadcaster struct {
-	ch              chan string
-	subscribers     map[string]*Subscriber
-	outgressAdds    chan *Subscriber
-	outgressAddRets chan string
-	outgressDels    chan string
+	ch                  chan string
+	subscribers         map[string]*Subscriber
+	subscribeRequests   chan *Subscriber
+	unsubscribeRequests chan string
 }
 
 func NewBroadcaster(bufferSize int) *Broadcaster {
@@ -17,19 +14,17 @@ func NewBroadcaster(bufferSize int) *Broadcaster {
 		make(chan string, bufferSize),
 		make(map[string]*Subscriber),
 		make(chan *Subscriber),
-		make(chan string),
 		make(chan string)}
 }
 
-func (b *Broadcaster) Subscribe() (string, *Subscriber) {
+func (b *Broadcaster) Subscribe() *Subscriber {
 	sub := NewSubscriber()
-	b.outgressAdds <- sub
-	id := <-b.outgressAddRets
-	return id, sub
+	b.subscribeRequests <- sub
+	return sub
 }
 
 func (b *Broadcaster) Unsubscribe(id string) {
-	b.outgressDels <- id
+	b.unsubscribeRequests <- id
 }
 
 func (b *Broadcaster) Broadcast(log string) {
@@ -39,13 +34,10 @@ func (b *Broadcaster) Broadcast(log string) {
 func (b *Broadcaster) Run() {
 	for {
 		select {
-		case sub := <-b.outgressAdds:
-			id := uuid.New()
-			b.subscribers[id] = sub
-			b.outgressAddRets <- id
-		case id := <-b.outgressDels:
-			sub := b.subscribers[id]
-			sub.Close()
+		case sub := <-b.subscribeRequests:
+			b.subscribers[sub.GetID()] = sub
+		case id := <-b.unsubscribeRequests:
+			b.subscribers[id].Close()
 			delete(b.subscribers, id)
 		case log := <-b.ch:
 			for _, sub := range b.subscribers {
